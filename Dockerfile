@@ -3,8 +3,8 @@ FROM ubuntu:focal
 ARG DEBIAN_FRONTEND=noninteractive
 
 ARG USERNAME=l4d2
-ARG USER_ID=2000
-ARG GROUP_ID=2000
+ARG USER_ID=1000
+ARG GROUP_ID=1000
 
 # this should be an externally mounted volume so you're not
 # redownloading ~9GB every run
