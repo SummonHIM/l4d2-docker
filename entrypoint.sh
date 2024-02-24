@@ -26,7 +26,7 @@ fi
 # if steamcmd hasn't been run yet, we'll run it real quick right now
 if [ ! -d "${HOMEDIR}/.steam/steamcmd" ]; then
     echo "[entrypoint.sh][INFO] Initializing SteamCMD..."
-    runuser -u "$(awk -F: "\$3 == ${USER_ID} {print \$1}" /etc/passwd)" -- steamcmd +quit
+    steamcmd +quit
 fi
 
 set +e
@@ -44,10 +44,8 @@ login anonymous
 app_update 222860 ${VALIDATE}
 EOF
     # ensure latest L4D2 dedicated server is installed
-    runuser -u "$(awk -F: "\$3 == ${USER_ID} {print \$1}" /etc/passwd)" -- steamcmd \
-        +runscript "${HOMEDIR}/.upgrade.steamcmd" \
-        +quit &&
-        break || echo "[entrypoint.sh][WARNING] Retrying update $n time"
+    steamcmd +runscript "${HOMEDIR}/.upgrade.steamcmd" \
+        +quit && break || echo "[entrypoint.sh][WARNING] Retrying update $n time"
     ((n++))
 done
 
@@ -66,6 +64,6 @@ ln -sf "../steamcmd/linux32/steamclient.so" \
 echo "[entrypoint.sh][INFO] Starting Left 4 Dead 2 Dedicated Server..."
 
 # start the dedicated server with the arugments passed in from CMD
-exec runuser -u "$(awk -F: "\$3 == ${USER_ID} {print \$1}" /etc/passwd)" -- "${WORKDIR}/srcds_run" "$@"
+"${WORKDIR}/srcds_run" "$@"
 
 echo "[entrypoint.sh][INFO] Left 4 Dead 2 Dedicated Server stoped..."

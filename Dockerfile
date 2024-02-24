@@ -37,7 +37,7 @@ RUN echo steam steam/question select "I AGREE" | debconf-set-selections \
 
 COPY entrypoint.sh /entrypoint.sh
 RUN ["chmod", "+x", "/entrypoint.sh"]
-
+USER ${USERNAME}
 WORKDIR ${WORKDIR}
 
 # Set default command
