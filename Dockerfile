@@ -8,11 +8,13 @@ ARG GROUP_ID=1000
 
 # this should be an externally mounted volume so you're not
 # redownloading ~9GB every run
-ARG WORKDIR=/l4d2
+ARG HOMEDIR=/${USERNAME}
+ARG WORKDIR=${HOMEDIR}/l4d2ds
 
 ENV USERNAME=${USERNAME}
 ENV USER_ID=${USER_ID}
 ENV GROUP_ID=${GROUP_ID}
+ENV HOMEDIR=${HOMEDIR}
 ENV WORKDIR=${WORKDIR}
 
 # install steamcmd and srcds prerequisites
@@ -30,7 +32,7 @@ RUN echo steam steam/question select "I AGREE" | debconf-set-selections \
   && rm -rf /var/lib/apt/lists/* \
   && ln -s /usr/games/steamcmd /usr/bin/steamcmd \
   && addgroup --gid ${GROUP_ID} ${USERNAME} \
-  && adduser --system --home ${WORKDIR} -u ${USER_ID} -gid ${GROUP_ID} \
+  && adduser --system --home ${HOMEDIR} -u ${USER_ID} -gid ${GROUP_ID} \
         --gecos '' --shell /bin/bash ${USERNAME}
 
 COPY entrypoint.sh /entrypoint.sh
