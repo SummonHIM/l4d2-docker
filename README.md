@@ -12,12 +12,12 @@ docker run -itd --net=host --name l4d2ds -v /path/to/your/l4d2ds:/srv/l4d2ds ghc
 
 ### Environment variables
 ```Shell
-USERNAME_PREFEX=l4d2  # Username prefex when uid not exist.
-UID=1000              # Runtime user id.
-GID=1000              # Runtime group id.
-WORKDIR=${WORKDIR}    # Runtime working directory.
-VALIDATE=false        # Validate, set true to enable.
-AUTO_RESTART=false    # Auto restart, set true to enable.
+USERNAME_PREFEX=l4d2    # Username prefex when uid not exist.
+UID=1000                # Runtime user id.
+GID=1000                # Runtime group id.
+VALIDATE=false          # Validate, set true to enable.
+AUTO_RESTART=false      # Auto restart, set true to enable.
+WORKDIR=/srv/l4d2ds     # Not recommend to modify this.
 ```
 
 ### Default start arguments
@@ -26,4 +26,4 @@ AUTO_RESTART=false    # Auto restart, set true to enable.
 ```
 
 ## Compatibility with TrueNAS k3s
-Trying...
+Yes
