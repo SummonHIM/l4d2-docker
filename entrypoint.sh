@@ -75,12 +75,29 @@ function Invoke-SteamAppUpdate() {
 # Param: <Start arguments>
 # Return: Void
 function start() {
+    if [ "$SKIP_UPDATE" == "false" ]; then
+        echo "[entrypoint.sh][Info] Starting update Left 4 Dead 2 Dedicated Server..."
+        updateTryCount=0
+        while [ $updateTryCount -lt 3 ]; do
+            if Invoke-SteamAppUpdate "$WORKDIR" 222860 "$VALIDATE"; then break; fi
+    
+            updateTryCount=$((updateTryCount + 1))
+            echo "[entrypoint.sh][Error] Update failed! Retrying $updateTryCount/3 times..."
+            sleep 1
+    
+            if [ $updateTryCount -ge 3 ]; then
+                echo "[entrypoint.sh][Error] Update failed!"
+                exit 1
+            fi
+        done
+        echo "[entrypoint.sh][Info] Left 4 Dead 2 Dedicated Server update successfully."
+    fi
+
     echo "[entrypoint.sh][Info] Starting Left 4 Dead 2 Dedicated Server..."
     local srcds_command="$WORKDIR/srcds_run $*"
     echo "[entrypoint.sh][Info] Command: $srcds_command"
     su - "$USERNAME" -c "$srcds_command"
     echo "[entrypoint.sh][Info] Left 4 Dead 2 Dedicated Server stoped..."
-
 }
 
 # Main
@@ -97,22 +114,6 @@ function main() {
 
     echo "[entrypoint.sh][Info] Setting \"$WORKDIR\"'s permissions..."
     chown -R "$UID:$GID" "$WORKDIR" || exit 1
-
-    echo "[entrypoint.sh][Info] Starting update Left 4 Dead 2 Dedicated Server..."
-    updateTryCount=0
-    while [ $updateTryCount -lt 3 ]; do
-        if Invoke-SteamAppUpdate "$WORKDIR" 222860 "$VALIDATE"; then break; fi
-
-        updateTryCount=$((updateTryCount + 1))
-        echo "[entrypoint.sh][Error] Update failed! Retrying $updateTryCount/3 times..."
-        sleep 1
-
-        if [ $updateTryCount -ge 3 ]; then
-            echo "[entrypoint.sh][Error] Update failed!"
-            exit 1
-        fi
-    done
-    echo "[entrypoint.sh][Info] Left 4 Dead 2 Dedicated Server update successfully."
 
     if [ "$AUTO_RESTART" == "true" ]; then
         while true; do

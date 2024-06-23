@@ -17,6 +17,7 @@ UID=1000                # Runtime user id.
 GID=1000                # Runtime group id.
 VALIDATE=false          # Validate, set true to enable.
 AUTO_RESTART=false      # Auto restart, set true to enable.
+SKIP_UPDATE=false       # Skip update, set true to skip steamcmd app update.
 WORKDIR=/srv/l4d2ds     # Not recommend to modify this.
 ```
 

@@ -5,7 +5,8 @@ ENV USERNAME_PREFEX=l4d2 \
     GID=1000 \
     WORKDIR=${WORKDIR} \
     VALIDATE=false \
-    AUTO_RESTART=false
+    AUTO_RESTART=false \
+    SKIP_UPDATE=false
 
 COPY entrypoint.sh /entrypoint.sh
 RUN chmod +x /entrypoint.sh
