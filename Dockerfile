@@ -1,16 +1,16 @@
-FROM cm2network/steamcmd:root
-ARG WORKDIR=/srv/l4d2ds
-ENV USERNAME_PREFEX=l4d2 \
-    UID=1000 \
-    GID=1000 \
-    WORKDIR=${WORKDIR} \
+FROM cm2network/steamcmd
+
+ARG WORKDIR=${HOMEDIR}/l4d2ds
+ENV WORKDIR=${WORKDIR} \
     VALIDATE=false \
     AUTO_RESTART=false \
     SKIP_UPDATE=false
+WORKDIR ${WORKDIR}
 
+USER root
 COPY entrypoint.sh /entrypoint.sh
 RUN chmod +x /entrypoint.sh
-WORKDIR ${WORKDIR}
+USER steam
 
 # Set default command
 ENTRYPOINT ["/entrypoint.sh"]
