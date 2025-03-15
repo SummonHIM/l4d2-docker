@@ -30,7 +30,10 @@ STEAM_PASSWORD_FILE=           # A path to password file. Used for docker secret
 ```
 
 ## Temporary Download L4D2
+SteamCMD no longer supports downloading L4D2DS using anonymous accounts. Additionally, the SteamCMD account currently in use must enable two-factor authentication (2FA) to log in. Therefore, it is recommended to set SKIP_UPDATE to true and use the following command to manually download or update L4D2DS.
+
 ```Shell
-docker run -it -v /path/to/your/l4d2ds:/home/steam/l4d2ds cm2network/steamcmd \
-    $STEAMCMDDIR/steamcmd.sh +force_install_dir /home/steam/l4d2ds +login USERNAME PASSWORD 2FA-IF-EXIST +app_update 222860 validate +quit
+docker run -it --rm -v /path/to/your/l4d2ds:/home/steam/l4d2ds cm2network/steamcmd \
+    $STEAMCMDDIR/steamcmd.sh +force_install_dir /home/steam/l4d2ds \
+    +login USERNAME PASSWORD 2FA-IF-EXIST +app_update 222860 validate +quit
 ```
