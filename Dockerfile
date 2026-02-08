@@ -1,17 +1,26 @@
-FROM cm2network/steamcmd
+FROM steamcmd/steamcmd:latest
 
-ARG WORKDIR=${HOMEDIR}/l4d2ds
+ARG HOMEDIR=/home/l4d2ds
+ARG WORKDIR=${HOMEDIR}/server
+
 ENV WORKDIR=${WORKDIR} \
     VALIDATE=false \
     AUTO_RESTART=false \
-    SKIP_UPDATE=false
+    SKIP_UPDATE=false \
+    ARGS_port=27015 \
+    ARGS_secure=1
+
+COPY entrypoint.sh /bin/entrypoint.sh
+
+RUN chmod +x /bin/entrypoint.sh && \
+    mkdir -p ${HOMEDIR} && \
+    mkdir -p ${WORKDIR} && \
+    chmod 700 ${HOMEDIR} && \
+    useradd -m -d ${HOMEDIR} -s /bin/bash l4d2ds && \
+    chown -R l4d2ds:l4d2ds ${HOMEDIR}
+
+USER l4d2ds
 WORKDIR ${WORKDIR}
 
-USER root
-COPY entrypoint.sh /entrypoint.sh
-RUN chmod +x /entrypoint.sh
-USER steam
-
-# Set default command
-ENTRYPOINT ["/entrypoint.sh"]
-CMD ["-port", "27015", "-secure"]
+ENTRYPOINT ["/bin/entrypoint.sh"]
+CMD []
