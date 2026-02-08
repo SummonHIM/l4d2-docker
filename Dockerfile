@@ -21,5 +21,7 @@ RUN chmod +x /entrypoint.sh && \
 USER ${USER}
 WORKDIR ${WORKDIR}
 
+RUN steamcmd +quit
+
 ENTRYPOINT ["/entrypoint.sh"]
 CMD []
