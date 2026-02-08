@@ -57,7 +57,7 @@ function steam_app_update() {
 
     if [[ ${DEBUG:-} == "true" ]]; then
         echo "[entrypoint.sh][steam_app_update][DEBUG] Command:"
-        printf '  %q' "${command[@]}"
+        printf '%b ' "${command[@]}"
         echo
     fi
 
@@ -141,7 +141,7 @@ function start_srcds() {
 
     if [[ ${DEBUG:-} == "true" ]]; then
         echo "[entrypoint.sh][DEBUG] srcds command:"
-        printf '  %q' "${srcds_command[@]}"
+        printf '%q ' "${srcds_command[@]}"
         echo
     fi
 
