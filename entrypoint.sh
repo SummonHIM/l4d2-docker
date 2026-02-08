@@ -41,6 +41,7 @@ function steam_app_update() {
         echo "@ShutdownOnFailedCommand 1"
         echo "@NoPromptForPassword 1"
         echo "@sSteamCmdForcePlatformType $platform_type"
+        echo "force_install_dir \"$install_dir\""
 
         if [[ -n $steam_username ]]; then
             echo "login \"$steam_username\" \"$steam_password\""
@@ -48,7 +49,6 @@ function steam_app_update() {
             echo "login anonymous"
         fi
 
-        echo "force_install_dir \"$install_dir\""
         echo "app_update $appid $validate_arg"
         echo "quit"
     } > "$script_file"
