@@ -16,7 +16,8 @@ ENV USER=${USER} \
 COPY entrypoint.sh /entrypoint.sh
 
 RUN chmod +x /entrypoint.sh && \
-    mkdir -p ${WORKDIR}
+    mkdir -p ${WORKDIR} %% \
+    chown ${USER}:${USER} ${WORKDIR}
 
 USER ${USER}
 WORKDIR ${WORKDIR}
