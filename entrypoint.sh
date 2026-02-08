@@ -26,49 +26,48 @@ function steam_app_update() {
     local install_dir="$1"
     local appid="$2"
     local validate="$3"
-    local platform_type="$4"
+    local platform_type="${4:-linux}"
     local steam_username="$5"
     local steam_password="$6"
 
-    # optional validate
+    local script_file="/tmp/update_l4d2ds.txt"
+
+    # validate 参数
     local validate_arg=""
     [[ $validate == "true" ]] && validate_arg="validate"
 
-    # login args (array, no word splitting)
-    local login_args=("anonymous")
-    [[ -n $steam_username ]] && login_args=("$steam_username" "$steam_password")
+    # 写 runscript
+    {
+        echo "@ShutdownOnFailedCommand 1"
+        echo "@NoPromptForPassword 1"
+        echo "@sSteamCmdForcePlatformType $platform_type"
 
-    # build command safely
-    local command=(
-        "/usr/bin/steamcmd"
-        "+@sSteamCmdForcePlatformType" "${platform_type:-linux}"
-        "+force_install_dir" "$install_dir"
-        "+login" "${login_args[@]}"
-        "+app_update" "$appid" "$validate_arg"
-        "+quit"
-    )
+        if [[ -n $steam_username ]]; then
+            echo "login \"$steam_username\" \"$steam_password\""
+        else
+            echo "login anonymous"
+        fi
 
-    # log
-    if [[ ${login_args[0]} == "anonymous" ]]; then
-        echo "[entrypoint.sh][steam_app_update][INFO] Using anonymous login"
-    else
-        echo "[entrypoint.sh][steam_app_update][INFO] Using Steam account login"
-    fi
+        echo "force_install_dir \"$install_dir\""
+        echo "app_update $appid $validate_arg"
+        echo "quit"
+    } > "$script_file"
+
+    chmod 600 "$script_file"
 
     if [[ ${DEBUG:-} == "true" ]]; then
-        echo "[entrypoint.sh][steam_app_update][DEBUG] Command:"
-        printf '%b ' "${command[@]}"
-        echo
+        echo "[entrypoint.sh][steam_app_update][DEBUG] Running steamcmd via runscript:"
+        sed 's/^/  /' "$script_file"
     fi
 
-    echo "[entrypoint.sh][steam_app_update][INFO] Running steamcmd..."
-    if "${command[@]}"; then
-        echo "[entrypoint.sh][steam_app_update][INFO] steamcmd finished successfully (appid=$appid)"
-    else
+    if ! /usr/bin/steamcmd +runscript "$script_file"; then
         local rc=$?
         echo "[entrypoint.sh][steam_app_update][ERROR] steamcmd failed with exit code $rc (appid=$appid)" >&2
+        rm -f "$script_file"
         return "$rc"
     fi
+
+    rm -f "$script_file"
 }
 
 # Update Steam app with retry
@@ -87,7 +86,7 @@ function update_l4d2() {
     local try=0
 
     while (( try < 3 )); do
-        echo "[entrypoint.sh][INFO] Running Steam update (attempt $((try+1))/3)..."
+        echo "[entrypoint.sh][update_l4d2][INFO] Running Steam update (attempt $((try+1))/3)..."
 
         if steam_app_update \
             "$WORKDIR" \
@@ -96,16 +95,16 @@ function update_l4d2() {
             "$platform_type" \
             "$steam_username" \
             "$steam_password"; then
-            echo "[entrypoint.sh][INFO] Steam update finished successfully."
+            echo "[entrypoint.sh][update_l4d2][INFO] Steam update finished successfully."
             return 0
         fi
 
         ((try++))
-        echo "[entrypoint.sh][ERROR] Steam update failed (attempt $try/3). Retrying..."
+        echo "[entrypoint.sh][update_l4d2][ERROR] Steam update failed (attempt $try/3). Retrying..."
         sleep 1
     done
 
-    echo "[entrypoint.sh][ERROR] Steam update failed after 3 attempts. Exiting." >&2
+    echo "[entrypoint.sh][update_l4d2][ERROR] Steam update failed after 3 attempts. Exiting." >&2
     return 1
 }
 
@@ -140,7 +139,7 @@ function start_srcds() {
     )
 
     if [[ ${DEBUG:-} == "true" ]]; then
-        echo "[entrypoint.sh][DEBUG] srcds command:"
+        echo "[entrypoint.sh][start_srcds][DEBUG] srcds command:"
         printf '%q ' "${srcds_command[@]}"
         echo
     fi
