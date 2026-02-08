@@ -41,9 +41,9 @@ function steam_app_update() {
     # build command safely
     local command=(
         "/usr/bin/steamcmd"
+        "+login" "${login_args[@]}"
         "+@sSteamCmdForcePlatformType" "${platform_type:-linux}"
         "+force_install_dir" "$install_dir"
-        "+login" "${login_args[@]}"
         "+app_update" "$appid" "$validate_arg"
         "+quit"
     )
