@@ -1,26 +1,25 @@
 FROM steamcmd/steamcmd:latest
 
-ARG HOMEDIR=/home/l4d2ds
-ARG WORKDIR=${HOMEDIR}/server
+ARG USER=ubuntu
+ARG HOME=/home/${USER}
+ARG WORKDIR=${HOME}/server
 
-ENV WORKDIR=${WORKDIR} \
+ENV USER=${USER} \
+    HOME=${HOME} \
+    WORKDIR=${WORKDIR} \
     VALIDATE=false \
     AUTO_RESTART=false \
     SKIP_UPDATE=false \
     ARGS_port=27015 \
     ARGS_secure=1
 
-COPY entrypoint.sh /bin/entrypoint.sh
+COPY entrypoint.sh /entrypoint.sh
 
-RUN chmod +x /bin/entrypoint.sh && \
-    mkdir -p ${HOMEDIR} && \
-    mkdir -p ${WORKDIR} && \
-    chmod 700 ${HOMEDIR} && \
-    useradd -m -d ${HOMEDIR} -s /bin/bash l4d2ds && \
-    chown -R l4d2ds:l4d2ds ${HOMEDIR}
+RUN chmod +x /entrypoint.sh && \
+    mkdir -p ${WORKDIR}
 
-USER l4d2ds
+USER ${USER}
 WORKDIR ${WORKDIR}
 
-ENTRYPOINT ["/bin/entrypoint.sh"]
+ENTRYPOINT ["/entrypoint.sh"]
 CMD []
