@@ -41,7 +41,7 @@ function steam_app_update() {
         echo "@ShutdownOnFailedCommand 1"
         echo "@NoPromptForPassword 1"
         echo "@sSteamCmdForcePlatformType $platform_type"
-        echo "force_install_dir \"$install_dir\""
+        echo "force_install_dir $install_dir"
 
         if [[ -n $steam_username ]]; then
             echo "login \"$steam_username\" \"$steam_password\""

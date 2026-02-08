@@ -15,8 +15,11 @@ ENV USER=${USER} \
 
 COPY entrypoint.sh /entrypoint.sh
 
-RUN chmod +x /entrypoint.sh && \
-    mkdir -p ${WORKDIR} %% \
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends gdb && \
+    rm -rf /var/lib/apt/lists/* && \
+    chmod +x /entrypoint.sh && \
+    mkdir -p ${WORKDIR} && \
     chown ${USER}:${USER} ${WORKDIR}
 
 USER ${USER}
